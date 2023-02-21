@@ -18,17 +18,23 @@ Some of the project's features are:
 
 Here are some screenshots of the different sections of the interface:
 
-  #### Auto Print Menu
+#### Auto Print Menu
 
-  ![Main Menu](GUI_images/auto_print.png)
+<div align="center">
+  <img src="GUI_images/auto_print.png" alt="Main Menu" width="550">
+</div>
 
-  #### Calibration Menu
+#### Calibration Menu
 
-  ![Calibration](GUI_images/calibration.png)
+<div align="center">
+  <img src="GUI_images/calibration.png" alt="Calibration" width="550">
+</div>
 
-  #### Manual Control Menu
+#### Manual Control Menu
 
-  ![Manual Control](GUI_images/manual_control.png)
+<div align="center">
+  <img src="GUI_images/manual_control.png" alt="Manual Control" width="550">
+</div>
   
     
 ## Hardware
