@@ -20,15 +20,15 @@ Here are some screenshots of the different sections of the interface:
 
   #### Auto Print Menu
 
-  ![Main Menu](images/auto_print.png)
+  ![Main Menu](GUI_images/auto_print.png)
 
   #### Calibration Menu
 
-  ![Calibration](images/calibration.png)
+  ![Calibration](GUI_images/calibration.png)
 
   #### Manual Control Menu
 
-  ![Manual Control](images/manual_control.png)
+  ![Manual Control](GUI_images/manual_control.png)
   
     
 ## Hardware
