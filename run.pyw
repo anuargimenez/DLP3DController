@@ -9,14 +9,14 @@ import customtkinter
 import tkinter
 from PIL import Image
 
-# ------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------
 # TK APP class inizialitation
 class App(customtkinter.CTk):
     def __init__(self):
         super().__init__()
-# ------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------
 
-# ------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------
         # Initialize pygame module (needed to display images in the DLP)
         pygame.init()
 
@@ -52,9 +52,9 @@ class App(customtkinter.CTk):
             pygame.display.update()
 
         show_black()  # Display black as soon as possible to avoid unwanted solidification
-# ------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------
 
-# ------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------
         # Check Motor state (moving/stopped) to synchronize DLP projection and avoid Buffer errors
         def checkMotor(ii):
             cc = 0
@@ -89,9 +89,9 @@ class App(customtkinter.CTk):
                     # El final de carrerea no está pulsado y el motor está parado
                     if pin_value2 == str(1) and pin_value1 == str(0):
                         break
-# ------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------
 
-# ------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------
 # App design
 
         # App title and window size
@@ -121,8 +121,9 @@ class App(customtkinter.CTk):
             self.textbox.see(tkinter.END)
 
         update_textbox("... 3D DLP Bioprinter ...")
-        
-# ------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------
+
+# ---------------------------------------------------------------------------------------------
 # Set serial communication with Arduino Mega 2560 (Marlin) and Arduino Nano (Sensoring)
         global ser1
         global ser2
@@ -136,10 +137,9 @@ class App(customtkinter.CTk):
             update_textbox("\nSerial connections are active and ready.")
         else:
             update_textbox("\nError: Serial connections failed.")
-# ------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------
 
-# ------------------------------------------------------------------------------------------
-
+# ---------------------------------------------------------------------------------------------
         # Create warning bottom frame and label (images must be loaded into 'images' folder)
         self.bottom_frame = customtkinter.CTkFrame(
             self, bg_color=("gray70", "gray30"), corner_radius=0, height=30)
@@ -188,7 +188,9 @@ class App(customtkinter.CTk):
                                                           fg_color="transparent", text_color=("gray10", "gray90"), hover_color=("gray70", "gray30"),
                                                           image=self.add_user_image, anchor="w", command=self.gcode_frame_button_event)  # Manual Mode
         self.gcode_frame_button.grid(row=3, column=0, sticky="ew")
+# ---------------------------------------------------------------------------------------------
 
+# ---------------------------------------------------------------------------------------------
         # Variable definitions to store COM port selection in variable
         selected_port_mega = customtkinter.StringVar(value="COM7")     
         selected_port_nano = customtkinter.StringVar(value="COM9")
@@ -233,17 +235,19 @@ class App(customtkinter.CTk):
 
         appearance_mode_menu1.grid(
             row=5, column=0, padx=20, pady=(30, 30), sticky="s")
+# ---------------------------------------------------------------------------------------------
 
+# ---------------------------------------------------------------------------------------------
         # Select screen light mode
         self.appearance_mode_menu = customtkinter.CTkOptionMenu(self.navigation_frame, values=["Dark", "Light", "System"],
                                                                 command=self.change_appearance_mode_event)  # Window light style menu
         self.appearance_mode_menu.grid(
             row=6, column=0, padx=20, pady=20, sticky="s")
-# ------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------
 
-# ------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------
 # 1. Create Print Menu frame
-# ------------------------------------------------------------
+
         def apply():  # Function to get new values of Process Parameters using an "apply" button
 
             # Variables that are only referenced inside functions --> Implicitly global
@@ -262,9 +266,9 @@ class App(customtkinter.CTk):
             bed_temp = float(bed_temp_var.get())
 
             update_textbox("\nParameters Updated!")
-# ------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------
 
-# ------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------
         # Function that ensures calibration
         def startprint():
             response = tkinter.messagebox.askquestion(
@@ -278,9 +282,9 @@ class App(customtkinter.CTk):
                 threading.Thread(target=printing).start()
             else:
                 update_textbox("\nCalibrate First Please!")
-# ------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------
 
-# ------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------
         # Function to stop print
         def quit():  # Called by STOP button in GUI. Exits the printing function.
             global ser1
@@ -292,9 +296,9 @@ class App(customtkinter.CTk):
             ser1 = serial.Serial('COM7', 115200)  # Arduino Mega Marlin
             ser2 = serial.Serial('COM9', 112500)  # Arduino Nano Sensoring
             time.sleep(1)  # Must be here to avoid errors
-# ------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------
 
-# ------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------
         # Structure frame of Print Menu
         self.print_frame = customtkinter.CTkFrame(
             self, corner_radius=0, fg_color="transparent")
@@ -359,10 +363,9 @@ class App(customtkinter.CTk):
         stop_printing = customtkinter.CTkButton(
             master=self.print_frame, text="STOP PRINT", command=quit,  width=100, height=50, fg_color="red")
         stop_printing.pack(pady=(0, 30), padx=10)
+# ---------------------------------------------------------------------------------------------
 
-# ------------------------------------------------------------------------------------------
-
-# ------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------
         # Printing loop (Gcode serial sending + DLP images projection)
         def printing():
             global exposure_time
@@ -411,20 +414,22 @@ class App(customtkinter.CTk):
             # For the last layer lift extra distance
             ser1.write(('G1 Z{}\n'.format(z_ii + 3*lift_distance)).encode())
             threading.Thread(target=checkMotor(1)).start()
-# ------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------
 
-# ------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------
 # 2. Create Print Menu frame
 
-# Cuando se realiza un homing, marlin automáticamente hace que en la posición del final de carrera Z=Z_MAX_POS=60, anulando las posiciones dadas por el Z=0 previo (si se calibra únicamente haciendo un g92 Z0).
+        """
+        Cuando se realiza un homing, marlin automáticamente hace que en la posición del final de carrera Z=Z_MAX_POS=60, anulando las posiciones dadas por el Z=0 previo (si se calibra únicamente haciendo un g92 Z0).
 
-# El alogoritmo de calibración propuesto es el siguiente:
-#   1. Con la máquina apagada, mover el motor y  llevar la cama de impresión hacia el fondo del tanque de la resina y colocar a una altura de capa aproximadamente.
-#   2. Pulsar el botón de calibrado "SET NEW ZERO". Esto hará lo siguiente:
-#       i. En la altura en la que se ha posicionado la plataforma (primera capa Z0), se realiza un M114 para leer las coordenadas del eje Z.
-#       ii. Se mueve el motor lo suficiente para que se active el final de carrera (evitando hacer un G28).
-#       iii. Se realiza otro M114 para leer la coordenada Z en la posición más alta.
-#       iv. La diferencia de las dos medidas es la distancia desde la posición del final de carrera a la primera capa y se utiliza para establecer el cero.
+        El alogoritmo de calibración propuesto es el siguiente:
+        1. Con la máquina apagada, mover el motor y  llevar la cama de impresión hacia el fondo del tanque de la resina y colocar a una altura de capa aproximadamente.
+        2. Pulsar el botón de calibrado "SET NEW ZERO". Esto hará lo siguiente:
+            i. En la altura en la que se ha posicionado la plataforma (primera capa Z0), se realiza un M114 para leer las coordenadas del eje Z.
+            ii. Se mueve el motor lo suficiente para que se active el final de carrera (evitando hacer un G28).
+            iii. Se realiza otro M114 para leer la coordenada Z en la posición más alta.
+            iv. La diferencia de las dos medidas es la distancia desde la posición del final de carrera a la primera capa y se utiliza para establecer el cero.
+        """
 
         # Function created to allow threading when calling calibration function, so that main window doesnt freeze
         def setzerocall():
@@ -518,14 +523,12 @@ class App(customtkinter.CTk):
         new_zero = customtkinter.CTkButton(
             master=self.calibration_frame, text="SET NEW ZERO", command=setzerocall, width=100, height=40, fg_color="green")
         new_zero.pack(pady=(10, 100), padx=10)
-# ------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------
 
-# ------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------
 # 3. Create Manual and Gcode Menu frame
 
-        # Function to read and send gcode commands
-
-        def gcodeinterp():
+        def gcodeinterp(): # Function to read and send gcode commands
             try:
                 # Gets inserted gcode
                 gcode = str(gcode_var.get())
@@ -535,16 +538,17 @@ class App(customtkinter.CTk):
                 update_textbox("\nInvalid Gcode!")
             update_textbox(f"\n{gcode} Sent!")
 
-        def manualhome():
+        def manualhome(): # Function to home after pressing button
             # Run gcode
             ser1.write(('G28 \n').encode())
             update_textbox("\nHoming...")
 
-        def gotozero():
+        def gotozero(): # Function to go Z0 after pressing button
             # Run gcode
             ser1.write(('G90\n G1 Z0 \n').encode())
             update_textbox("\nGoing to Z0...")
 
+        # Functions to move with relative coordinates manually
         def rel_positioning1():
             # Run gcode
             ser1.write(('G91\n G1 Z1\n').encode())  # Relative positioning
@@ -565,13 +569,13 @@ class App(customtkinter.CTk):
             ser1.write(('G91\n G1 Z-10\n').encode())  # Relative positioning
             update_textbox("\nMoving down 10 mm")
 
-        def shwimg():
+        def shwimg(): # Show selected img
             # Gets inserted gcode
             imgin = int(noimg_var.get())
             show_image(imgin)
-            update_textbox(f"\nShowing img n: {noimg_var}")
+            update_textbox(f"\nShowing img n: {imgin}")
 
-        def shwblack():
+        def shwblack(): # Show black background
             # Gets inserted gcode
             show_black()
             update_textbox("\nBlack background.")
@@ -652,15 +656,14 @@ class App(customtkinter.CTk):
         send_black = customtkinter.CTkButton(
             master=self.gcode_frame, text="BLACK PROJECTION", command=show_black, width=160, height=25, fg_color="purple")
         send_black.pack(pady=(5, 20), padx=10)
+# ---------------------------------------------------------------------------------------------
 
-# ------------------------------------------------------------------------------------------
-
-# ------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------
         # Select default frame
         self.select_frame_by_name("print")
-# ------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------
 
-# ------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------
 # Left Menu to select between "1. Autoprint", "2. Calibration", "3. Manual/Gcode"
     def select_frame_by_name(self, name):
         # set button color for selected button
@@ -696,24 +699,21 @@ class App(customtkinter.CTk):
 
     def change_appearance_mode_event(self, new_appearance_mode):
         customtkinter.set_appearance_mode(new_appearance_mode)
-# ------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------
 
-# ------------------------------------------------------------------------------------------
-
-# Main loop and closing functions. Threrading is needed to avoid window lags
+# ---------------------------------------------------------------------------------------------
+# Main loop and closing functions. Threrading is needed to avoid window lags.
 def on_closing():
     ser1.close()
     ser2.close()
     if tkinter.messagebox.askokcancel("Quit", "Do you want to quit?"):
         os._exit(0)
 
-
 def on_closing_threaded():
     threading.Thread(target=on_closing).start()
 
-
 if __name__ == "__main__":
     app = App()
-    app.protocol("WM_DELETE_WINDOW", on_closing_threaded)
+    app.protocol("WM_DELETE_WINDOW", on_closing_threaded) # Message to ensure window closing
     threading.Thread(target=app.mainloop()).start()
-# ------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------
