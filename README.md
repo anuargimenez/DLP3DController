@@ -54,17 +54,17 @@ Some of the hardware used is listed below:
     - 24 V Power Supply.
     
   #### Wiring
-  | Pin               | Color             | Connections           |
-  | ----------------- | ----------------- | --------------------- |
-  | DC+               | RED               |  Z-VMOT               |
-  | GND               | BLACK             |  Z-GND                | 
-  | PU+               | LIGHT BLUE        |  Z-STEP               |
-  | PU-               | PINK              |  GND                  |
-  | DR+               | GREEN             |  Z-DIR                |
-  | DR-               | DARK BLUE         |  GND                  |
-  | Lim. Sw. NO       | -                 |  Ard. nano + Z MAX S  |
-  | Lim. Sw. NO       | -                 |  Ard. nano + Z MAX -  |
-  | Z-EN              | -                 |  Ard. nano            |
+  | Pin               | Color             | Connections              |
+  | ----------------- | ----------------- | ---------------------    |
+  | DC+               | RED               |  Z-VMOT                  |
+  | GND               | BLACK             |  Z-GND                   | 
+  | PU+               | LIGHT BLUE        |  Z-STEP                  |
+  | PU-               | PINK              |  GND                     |
+  | DR+               | GREEN             |  Z-DIR                   |
+  | DR-               | DARK BLUE         |  GND                     |
+  | Lim. Sw. C        | *                 |  Ard. nano D3 + Z MAX S  |
+  | Lim. Sw. NC       | *                 |  Ard. nano GND + Z MAX - |
+  | Z-EN              | *                 |  Ard. nano D4            |
 
 
 ## Folder structure
